@@ -16,12 +16,12 @@ class AdminTree extends Component {
     addClicked = () => {
         this.disableButtons();
 
-        var orgData = this.state.treeControl.getData();
-        var orgSelectedNode = this.state.treeControl.getSelectedNode();
-        var cloneData = orgData.map(f => ({ ...f }));
+        let orgData = this.state.treeControl.getData();
+        let orgSelectedNode = this.state.treeControl.getSelectedNode();
+        let cloneData = orgData.map(f => ({ ...f }));
 
         this.state.treeControl.updateData(cloneData);
-        var selectedNode = this.state.treeControl.getSelectedNode();
+        let selectedNode = this.state.treeControl.getSelectedNode();
         let addNode = new node({
             text: "",
             tempText: "",
@@ -68,12 +68,13 @@ class AdminTree extends Component {
     renameClicked = () => {
         this.disableButtons();
 
-        var orgData = this.state.treeControl.getData();
-        var orgSelectedNode = this.state.treeControl.getSelectedNode();
-        var cloneData = orgData.map(f => ({ ...f }));
+        let startState = this.state.treeControl.getState();
+        let orgData = this.state.treeControl.getData();
+        let orgSelectedNode = this.state.treeControl.getSelectedNode();
+        let cloneData = orgData.map(f => ({ ...f }));
 
         this.state.treeControl.updateData(cloneData).disableNode(cloneData);
-        var selectedNode = this.state.treeControl.getSelectedNode();
+        let selectedNode = this.state.treeControl.getSelectedNode();
         selectedNode.item.tempText = selectedNode.item.text;
         selectedNode.item.Leaf = InputLeaf;
         selectedNode.item.onChange = event => { selectedNode.item.tempText = event.target.value; this.state.treeControl.redrawTree(); }
@@ -82,8 +83,7 @@ class AdminTree extends Component {
         selectedNode.item.onCancel = () => {
             this.onNodeClick = this.nodeClicked;
             this.onNodeClick(orgSelectedNode);
-            this.state.treeControl.updateData(orgData)
-                .clearAllStates().selectNode(orgSelectedNode).openNode(orgSelectedNode)
+            this.state.treeControl.setState(startState).updateData(orgData)
                 .redrawTree();
         };
         selectedNode.item.onOK = event => {
@@ -101,13 +101,14 @@ class AdminTree extends Component {
     moveClicked = () => {
         this.disableButtons();
 
-        var orgData = this.state.treeControl.getData();
-        var orgNodeFrom = this.state.treeControl.getSelectedNode();
-        var cloneData = orgData.map(f => ({ ...f }));
+        let startState = this.state.treeControl.getState();
+        let orgData = this.state.treeControl.getData();
+        let orgNodeFrom = this.state.treeControl.getSelectedNode();
+        let cloneData = orgData.map(f => ({ ...f }));
 
         this.state.treeControl.updateData(cloneData);
 
-        var nodeFrom = this.state.treeControl.getSelectedNode();
+        let nodeFrom = this.state.treeControl.getSelectedNode();
         if (nodeFrom.getParent)
             this.state.treeControl.disableNode(nodeFrom.getParent());
 
@@ -118,9 +119,8 @@ class AdminTree extends Component {
         nodeFrom.item.onCancel = () => {
             this.onNodeClick = this.nodeClicked;
             this.onNodeClick(orgNodeFrom);
-            this.state.treeControl.updateData(orgData)
-                .clearAllStates().selectNode(orgNodeFrom).openNode(orgNodeFrom)
-                .redrawTree();
+            this.state.treeControl.setState(startState)
+                .updateData(orgData).redrawTree();
         };
 
         let nodeTo = new node({ ...orgNodeFrom.item, KeyID: 9999, Leaf: MoveToLeaf });
@@ -154,32 +154,32 @@ class AdminTree extends Component {
     deleteClicked = () => {
         this.disableButtons();
 
-        var orgData = this.state.treeControl.getData();
-        var orgSelectedNode = this.state.treeControl.getSelectedNode();
-        var cloneData = orgData.map(f => ({ ...f }));
+        let startState = this.state.treeControl.getState();
+        let orgData = this.state.treeControl.getData();
+        let orgSelectedNode = this.state.treeControl.getSelectedNode();
+        let cloneData = orgData.map(f => ({ ...f }));
 
         this.state.treeControl.updateData(cloneData).disableNode(cloneData);
         cloneData.forEach(f => this.state.treeControl.disableNode(f));
 
-        var selectedNode = this.state.treeControl.getSelectedNode();
+        let selectedNode = this.state.treeControl.getSelectedNode();
         selectedNode.item.Leaf = MoveToLeaf;
         this.state.treeControl.redrawTree();
 
         selectedNode.item.onCancel = () => {
             this.onNodeClick(orgSelectedNode);
-            this.state.treeControl.updateData(orgData)
-                // .clearAllStates().selectNode(orgSelectedNode).openNode(orgSelectedNode)
-                .redrawTree();
+            this.state.treeControl.setState(startState)
+                .updateData(orgData).redrawTree();
         };
         selectedNode.item.onOK = () => {
-            var sortedData = this.state.treeControl.getFilteredAndSortedData();
-            var sel = sortedData.find(f => this.props.idFnc(f) === this.props.idFnc(orgSelectedNode));
-            var parent = sel.getParent();
+            let sortedData = this.state.treeControl.getFilteredAndSortedData();
+            let sel = sortedData.find(f => this.props.idFnc(f) === this.props.idFnc(orgSelectedNode));
+            let parent = sel.getParent();
 
-            var ind = Math.min(parent.children.indexOf(sel), parent.children.length - 2);
+            let ind = Math.min(parent.children.indexOf(sel), parent.children.length - 2);
             orgSelectedNode.getParent().removeChild(orgSelectedNode);
 
-            var selNode = ind < 0 ? parent : parent.removeChild(sel).children[ind];
+            let selNode = ind < 0 ? parent : parent.removeChild(sel).children[ind];
             this.onNodeClick(selNode);
 
             this.state.treeControl.updateData(orgData)
@@ -202,7 +202,7 @@ class AdminTree extends Component {
     idFnc = node => node.item.KeyID + ':' + node.item.KeyID_mdbID;
 
     nodeClicked = node => {
-        var btns = this.state.buttons.map(f => ({ ...f, enabled: true }));
+        let btns = this.state.buttons.map(f => ({ ...f, enabled: true }));
         if (node.getParent == null)
             btns.filter(f => f.name !== 'Add').forEach(f => f.enabled = false);
         this.setState({ buttons: btns });
