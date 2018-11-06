@@ -92,7 +92,7 @@ class AdminTree extends Component {
             this.props.changeState(state => commonRedux.immute(state, { data: orgData }))();
         }
         this.onNodeClick = node => {
-            selectedNode.item.onCancel();
+            this.state.treeControl.updateData(orgData);
             this.renameClicked();
         }
         this.state.treeControl.redrawTree();
