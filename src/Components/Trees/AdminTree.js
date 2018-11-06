@@ -7,7 +7,7 @@ import MoveFromLeaf from '../Leafs/MoveFromLeaf';
 import MoveToLeaf from '../Leafs/MoveToLeaf';
 import Aux from '../../hoc/Auxx';
 
-import { IsStringNullOrEmpty } from '../../Libraries/common';
+import { StringSorter, IsStringNullOrEmpty } from '../../Libraries/common';
 import commonRedux from '../../Libraries/commonRedux';
 
 class AdminTree extends Component {
@@ -168,7 +168,7 @@ class AdminTree extends Component {
         selectedNode.item.onCancel = () => {
             this.onNodeClick(orgSelectedNode);
             this.state.treeControl.updateData(orgData)
-                .clearAllStates().selectNode(orgSelectedNode).openNode(orgSelectedNode)
+                // .clearAllStates().selectNode(orgSelectedNode).openNode(orgSelectedNode)
                 .redrawTree();
         };
         selectedNode.item.onOK = () => {
@@ -217,6 +217,8 @@ class AdminTree extends Component {
         this.onNodeClick(controls.getData());
         window.controls = controls;
     }
+
+    sortFnc = node => node.sortBy(f => f.item.text, StringSorter);
     render() {
         return (
             <Aux>
@@ -225,7 +227,7 @@ class AdminTree extends Component {
                         disabled={!f.enabled} onClick={f.onClick}>{f.name}</button>))}
                 </div>
                 <Tree data={this.props.data} idFnc={this.props.idFnc} getControls={this.getControls}
-                    sortFnc={this.props.sortFnc}
+                    sortFnc={this.sortFnc}
                     filterFnc={node => node.filterAny(f => !f.item.isHidden)}
                     onNodeClick={(node) => this.onNodeClick(node)}
                 />

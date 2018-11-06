@@ -54,7 +54,7 @@ var departments = [
     "Selected": false
   },
   {
-    "Name": " Marko  marko 11 ",
+    "Name": " Marko  marko 11 ",
     "KeyID": 185,
     "KeyID_mdbID": 3100,
     "Parent": 1,
